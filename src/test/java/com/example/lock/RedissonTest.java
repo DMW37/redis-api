@@ -25,7 +25,7 @@ public class RedissonTest {
         config.useSingleServer().setAddress("redis://xjdmw:6379").setPassword("redis");
         redissonClient = Redisson.create(config);
         rLock1 = redissonClient.getLock("xx");
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 40; i++) {
             new Thread(new PrintTest()).start();
         }
 
@@ -40,20 +40,71 @@ public class RedissonTest {
 
             }
 
-            long time = System.currentTimeMillis();
-            rLock1.lock();
-            print1();
-            rLock1.unlock();
-            long time2 = System.currentTimeMillis();
-            System.out.println("time:" + (time2-time));
+            if (Thread.currentThread().getName().contains("2")) {
+                rLock1.lock();
+                print2();
+                rLock1.unlock();
+            } else if (Thread.currentThread().getName().contains("3")) {
+                rLock1.lock();
+                print3();
+                rLock1.unlock();
+            } else if (Thread.currentThread().getName().contains("4")) {
+                rLock1.lock();
+                print4();
+                rLock1.unlock();
+            }else if(Thread.currentThread().getName().contains("1")){
+                rLock1.lock();
+                print1();
+                rLock1.unlock();
+            }
         }
     }
     public static void print1() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 25; i++) {
             if (a > 99) {
                 break;
             }
+            System.out.println(Thread.currentThread().getName() + ": i=" + (i));
             a++;
+            long time = System.currentTimeMillis();
+            System.out.println("time:" + time);
+        }
+    }
+
+    public static void print2() {
+        for (int i = 25; i < 50; i++) {
+            if (a > 99) {
+                break;
+            }
+            System.out.println(Thread.currentThread().getName() + ": i=" + (i));
+            a++;
+            long time = System.currentTimeMillis();
+            System.out.println("time:" + time);
+
+        }
+    }
+
+    public static void print3() {
+        for (int i = 50; i < 75; i++) {
+            if (a > 99) {
+                break;
+            }
+            System.out.println(Thread.currentThread().getName() + ": i=" + (i));
+            a++;
+            long time = System.currentTimeMillis();
+            System.out.println("time:" + time);
+
+        }
+    }
+    public static void print4() {
+        for (int i = 75; i < 100; i++) {
+            if (a > 99) {
+                break;
+            }
+            System.out.println(Thread.currentThread().getName() + ": i=" + (i));
+            a++;
+            long time = System.currentTimeMillis();
+            System.out.println("time:" + time);
         }
     }
 
