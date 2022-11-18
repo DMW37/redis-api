@@ -19,13 +19,20 @@ public class RedissonTest {
     public static CountDownLatch latch = new CountDownLatch(5);
     public static RedissonClient redissonClient;
     public static RLock rLock1;
+    public static RLock rLock2;
+    public static RLock rLock3;
+    public static RLock rLock4;
     public static volatile int a = 0;
+
     public static void main(String[] args) throws Exception {
         Config config = new Config();
         config.useSingleServer().setAddress("redis://xjdmw:6379").setPassword("redis");
         redissonClient = Redisson.create(config);
         rLock1 = redissonClient.getLock("xx");
-        for (int i = 0; i < 40; i++) {
+        rLock2 = redissonClient.getLock("yy");
+        rLock3 = redissonClient.getLock("zz");
+        rLock4 = redissonClient.getLock("kk");
+        for (int i = 0; i < 4; i++) {
             new Thread(new PrintTest()).start();
         }
 
@@ -39,19 +46,18 @@ public class RedissonTest {
             } catch (Exception e) {
 
             }
-
             if (Thread.currentThread().getName().contains("2")) {
-                rLock1.lock();
+                rLock4.lock();
                 print2();
-                rLock1.unlock();
+                rLock4.unlock();
             } else if (Thread.currentThread().getName().contains("3")) {
-                rLock1.lock();
+                rLock3.lock();
                 print3();
-                rLock1.unlock();
+                rLock3.unlock();
             } else if (Thread.currentThread().getName().contains("4")) {
-                rLock1.lock();
+                rLock2.lock();
                 print4();
-                rLock1.unlock();
+                rLock2.unlock();
             }else if(Thread.currentThread().getName().contains("1")){
                 rLock1.lock();
                 print1();
@@ -68,6 +74,7 @@ public class RedissonTest {
             a++;
             long time = System.currentTimeMillis();
             System.out.println("time:" + time);
+
         }
     }
 
@@ -105,7 +112,7 @@ public class RedissonTest {
             a++;
             long time = System.currentTimeMillis();
             System.out.println("time:" + time);
+
         }
     }
-
 }
