@@ -9,5 +9,4 @@ class LockApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }
